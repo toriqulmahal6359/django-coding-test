@@ -17,7 +17,7 @@ class CreateProductView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CreateProductView, self).get_context_data(**kwargs)
         paginator = context['paginator']
-        page_numbers_range = 3 
+        page_numbers_range = 1
         current_page = context['page_obj'].number
         start_page = max(current_page - page_numbers_range, 1)
         end_page = min(current_page + page_numbers_range, paginator.num_pages)
