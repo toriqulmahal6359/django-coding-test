@@ -5,6 +5,8 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
 from product.models import Variant, Product, ProductImage, ProductVariant, ProductVariantPrice
+from django.core.paginator import Paginator, EmptyPage
+
 
 class CreateProductView(generic.TemplateView):
     template_name = 'products/create.html'
@@ -61,4 +63,10 @@ class CreateProductView(generic.TemplateView):
     
     def product(request):
         products = Product.objects.all()
-        return render(request, 'products/list.html', {'product': products})
+        paginator = Paginator(products, 10)
+        page_number = request.GET.get('list')
+        try:
+            items = paginator.get_page(page_number)
+        except EmptyPage:
+            items = paginator.get_page(1)
+        return render(request, 'products/list.html', {'product': products, 'items': items, 'paginator': paginator })
