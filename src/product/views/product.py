@@ -1,6 +1,7 @@
 from django.views import generic
 
 from django.shortcuts import render
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -79,3 +80,40 @@ class CreateProductView(generic.TemplateView):
         except EmptyPage:
             items = paginator.get_page(1)
         return render(request, 'products/list.html', {'product': products, 'items': items, 'paginator': paginator })
+    
+    def product_filter(request):
+        # Get all products
+        products = Product.objects.all()
+
+        # Apply filters
+        product_title = request.GET.get('product_title')
+        product_variant = request.GET.get('product_variant')
+        min_price = request.GET.get('price_from')
+        max_price = request.GET.get('price_to')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        if product_title:
+            products = products.filter(name__icontains=product_title)
+
+        if product_variant:
+            products = products.filter(variant__icontains=product_variant)
+
+        if min_price:
+            products = products.filter(price__gte=min_price)
+
+        if max_price:
+            products = products.filter(price__lte=max_price)
+
+        if start_date:
+            products = products.filter(date_created__gte=start_date)
+
+        if end_date:
+            products = products.filter(date_created__lte=end_date)
+
+        context = {
+            'products': products
+        }
+
+        return render(request, 'products/list.html', context)
+

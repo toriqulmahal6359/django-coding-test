@@ -15,7 +15,12 @@ urlpatterns = [
     # Products URLs
     path('create/', CreateProductView.as_view(), name='create.product'),
     path('list/', TemplateView.as_view(template_name='products/list.html', extra_context={
-        'product': True
+        'product': True,
+        'products': True,
+        'variants': True,
+        'product_variants': True,
+        'product_image': True,
+        'product_variant_price': True
     }), name='list.product'),
     path('table/', TemplateView.as_view(template_name='products/table.html', extra_context={
         'product': True
