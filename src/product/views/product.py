@@ -9,13 +9,22 @@ from django.core.paginator import Paginator, EmptyPage
 
 
 class CreateProductView(generic.TemplateView):
+    model = Product
+    paginate_by = 10
     template_name = 'products/create.html'
+    context_object_name = 'products'
 
     def get_context_data(self, **kwargs):
         context = super(CreateProductView, self).get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_numbers_range = 3 
+        current_page = context['page_obj'].number
+        start_page = max(current_page - page_numbers_range, 1)
+        end_page = min(current_page + page_numbers_range, paginator.num_pages)
         variants = Variant.objects.filter(active=True).values('id', 'title')
         context['product'] = True
         context['variants'] = list(variants.all())
+        context['page_numbers'] = range(start_page, end_page + 1)
         return context
     
     @csrf_exempt
